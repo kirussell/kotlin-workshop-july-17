@@ -12,6 +12,17 @@ fun Any?.toJson(): String = gson.toJson(this)
 fun main(args: Array<String>) {
     helloWorld()
     membersList()
+    searchByUserName()
+    searchMembers()
+}
+
+private fun searchMembers() {
+    Spark.get("kotlin/search/members") { req, _ ->
+        dao.members(req.queryParams("query") ?: "").toJson()
+    }
+}
+
+private fun searchByUserName() {
     Spark.get("kotlin/members/:user") { req, _ ->
         dao.search(req.params("user"))?.toJson() ?: halt(404, "User not found")
     }
@@ -38,4 +49,6 @@ class MembersDao {
             .map { Member(it[0], it[1].toInt()) }
 
     fun search(name: String): Member? = all().find { it.name == name }
+
+    fun members(query: String) = all().filter { it.name.startsWith(query) }
 }

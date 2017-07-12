@@ -95,4 +95,19 @@ Spark.get("kotlin/members/:user") { req, _ ->
 ```
 for successful search 200 with json is returned, for unsuccessful 404 with appropriate message
 
-run `./gradlew :lib:run` and open http://localhost:4567/kotlin/members/\<UserName\> in browser
+run `./gradlew :lib:run` and open http://localhost:4567/kotlin/members/`UserName` in browser
+
+Filter members
+---
+Lets make some filtering aka search by query
+```
+Spark.get("kotlin/search/members") { req, _ ->
+    dao.members(req.queryParams("query") ?: "").toJson()
+}
+
+class MembersDao {
+    fun all() {...}
+    fun members(query: String) = all().filter { it.name.startsWith(query) }
+}
+```
+run `./gradlew :lib:run` and open http://localhost:4567/kotlin/search/members?query=`Query` in browser
