@@ -78,3 +78,21 @@ fun Any?.toJson(): String = gson.toJson(this)
 ```
 run `./gradlew :lib:run` and open http://localhost:4567/kotlin/members in browser
 
+Search functionality
+---
+Now we can easily implement search
+```
+class MembersDao {
+    fun all() {...}
+    fun search(name: String): Member? = all().find { it.name == name }
+}
+```
+and return with Spark by given name
+```
+Spark.get("kotlin/members/:user") { req, _ ->
+    dao.search(req.params("user"))?.toJson() ?: halt(404, "User not found")
+}
+```
+for successful search 200 with json is returned, for unsuccessful 404 with appropriate message
+
+run `./gradlew :lib:run` and open http://localhost:4567/kotlin/members/\<UserName\> in browser

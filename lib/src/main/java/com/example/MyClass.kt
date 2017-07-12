@@ -2,6 +2,7 @@ package com.example
 
 import com.google.gson.Gson
 import spark.Spark
+import spark.Spark.halt
 
 val dao = MembersDao()
 val gson = Gson()
@@ -10,6 +11,13 @@ fun Any?.toJson(): String = gson.toJson(this)
 
 fun main(args: Array<String>) {
     helloWorld()
+    membersList()
+    Spark.get("kotlin/members/:user") { req, _ ->
+        dao.search(req.params("user"))?.toJson() ?: halt(404, "User not found")
+    }
+}
+
+private fun membersList() {
     Spark.get("kotlin/members") { _, _ -> dao.all().toJson() }
 }
 
@@ -28,4 +36,6 @@ class MembersDao {
             .readLines()
             .map { it.split(" ") }
             .map { Member(it[0], it[1].toInt()) }
+
+    fun search(name: String): Member? = all().find { it.name == name }
 }
