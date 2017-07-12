@@ -25,3 +25,7 @@ Configure Kotlin Plugin & Standard Library
 ![](/images/step_8.jpg)
 
 ![](/images/step_9.jpg)
+
+Kotlin in action
+---
+[Let's write simple Rest API service >>](/lib/)
